@@ -49,12 +49,14 @@ website_t_str = 'MDKizZH'
 class PingPongSender(threading.Thread):
     # sending pingpong to keep long connection
     def __init__(self, ws, logger):
+
         threading.Thread.__init__(self)
         self.loop = False
         self.ws = ws
         self.logger = logger
 
     def run(self):
+
         self.loop = True
         while self.loop:
             time.sleep(30)
@@ -69,6 +71,7 @@ class PingPongSender(threading.Thread):
 class TimeController(threading.Thread):
     # request new partner if partner not typing or sending anything within chat_timeout seconds
     def __init__(self, ws, logger, sender):
+
         threading.Thread.__init__(self)
         self.loop = False
         self.time_left = chat_timeout
@@ -77,6 +80,7 @@ class TimeController(threading.Thread):
         self.new_partner_request = sender
 
     def run(self):
+
         self.loop = True
         while self.loop:
             if self.time_left == 0:
@@ -104,6 +108,7 @@ class TimeController(threading.Thread):
 
 class Uncle:
     def __init__(self, index=0):
+
         self.first_time = True
         self.loop = True
 
@@ -135,6 +140,7 @@ class Uncle:
             self.loop = False
 
     def start(self):
+
         if not os.path.isdir('Logs/'):
             os.mkdir(log_path)
 
@@ -205,6 +211,7 @@ class Uncle:
         self.request_new_user(ws)
 
     def on_message(self, ws, message):
+
         self.phrase_received_data(message, ws)
 
     def on_error(self, ws, error):
@@ -222,6 +229,7 @@ class Uncle:
             print 'Delete IP: ', self.proxy_address[0]
 
     def on_close(self, ws):
+
         self.pingpong_sender.loop = False
         self.time_controller.loop = False
 
@@ -416,6 +424,7 @@ class Uncle:
             self.logger.warning(received_str)
 
     def request_new_user(self, ws):
+
         request = ["syscmd", {"msg": "new", "gender": chatbot_gender, "province": chatbot_location,
                               "isSelfStayStr": False, "age": chatbot_age, "savedId": self.usr_id,
                               "isShowLocation": True, "wordFilter": 1}]
@@ -424,6 +433,7 @@ class Uncle:
         ws.send(request_str)
 
     def get_chatbot_id(self, length=17):
+
         alphabet = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890"
         chatbot_id = ""
 
@@ -438,6 +448,7 @@ class Uncle:
         return chatbot_id
 
     def get_msg_id(self):
+
         now = time.time()
         n = random.random()
         msg_id = 'm' + str(int(now * 1000)) + str(int(round(n * 10)))

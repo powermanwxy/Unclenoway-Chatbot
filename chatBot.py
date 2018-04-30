@@ -13,6 +13,7 @@ respond = '...'
 
 
 def get_message_from_bot(logger, usr_id, usr_city, partner_msg, chatbot_api_key):
+
     global respond
 
     data = {

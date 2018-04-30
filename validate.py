@@ -11,6 +11,7 @@ import random
 
 
 def generate_usr_id(length = 17):
+
     alphabet = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890"
     usr_id = ""
 
@@ -23,6 +24,7 @@ def generate_usr_id(length = 17):
 
 
 def get_user_id(logger, validate_api_key, website_t_num):
+
     api_count_url = 'http://jiyan.25531.com/api/info'
 
     check_params = {'appkey': validate_api_key}
@@ -81,5 +83,6 @@ def get_user_id(logger, validate_api_key, website_t_num):
     else:
         print 'error', ans
         logger.error(ans)
+        return ''
 
     return usr_id
