@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
 This function is working with http://www.tuling123.com. Making sure register and change the chatbot_api_key

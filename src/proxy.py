@@ -11,12 +11,11 @@ def get_proxy(logger, proxy_url, index):
     # Get proxy server info from pool.
     try:
         r = requests.get(proxy_url)
+        data = json.loads(r.text)
     except:
         print 'Connect proxy server error!'
         logger.error('Connect proxy server error!')
         return []
-    else:
-        data = json.loads(r.text)
 
     if index > len(data):
         print "Index over current proxy count."

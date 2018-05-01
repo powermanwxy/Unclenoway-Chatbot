@@ -1,10 +1,11 @@
+#! /usr/bin/env python
 # -*- coding: UTF-8 -*-
 from Uncle import Uncle
 from multiprocessing import Pool
 
 
 """
-Please take a look at <Uncle.py>. Make sure that config variables are correct.
+Please take a look at <config.py>. Make sure that config variables are correct.
 """
 
 # In order to protect the website, processes should not more then four.
@@ -12,6 +13,7 @@ processes = 1
 
 
 def create_instance(i):
+
     uncle = Uncle(i)
     print 'Uncle instance: ', i
     uncle.start()

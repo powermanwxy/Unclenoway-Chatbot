@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: UTF-8 -*-
 import requests
 import json
@@ -12,36 +13,8 @@ import os
 import chatBot
 import validate
 import proxy
+from config import *
 
-# Chat timeout
-chat_timeout = 120
-# Log filename format: date-uncleInstanceIndex-partnerIndex.log
-log_path = "Logs/"
-
-# Proxy might be unstable, if you're not running this in multiprocessing, suggest just don't use proxy.
-proxy_enabled = False
-# This has to match with IPProxyPool's config.
-proxy_url = 'http://127.0.0.1:1024'
-
-# Chatbot's gender: f/m
-chatbot_gender = 'f'
-# Chatbot's city, currently only support cities in China.
-chatbot_location = u'北京'
-# Chatbot's age: [1:3], 1 = 18-, 2 = 19 ~ 23, 3 = 23+
-chatbot_age = 2
-# Cause the chatbot haven't support image yet, this is the default responding if partner sends a image.
-chatbot_img_respond = u'哇厉害了hhh'
-
-# See <validate.py>. If this is not empty, automatic validate platform will NOT be used.
-usr_id = ''
-# Validate platform api key. http://www.25531.com
-validate_api_key = ''
-# Chatbot platform api key. http://www.tuling123.com
-chatbot_api_key = ''
-
-# Magic word, you might change this if the program is not working, otherwise just keep it default.
-website_t_num = '1525060720598'
-website_t_str = 'MDKizZH'
 
 # Don't change the code below unless you know what you are doing.
 
@@ -331,8 +304,8 @@ class Uncle:
                     self.logger.info('End by partner, new request...')
 
                 elif item['msg'] == 'broadcast':
-                    print (colored('Not allowed to send image within 2 min from beginning.', 'yellow'))
-                    self.logger.warning('Not allowed to send image within 2 min from beginning.')
+                    print (colored('Sending pictures needs to be two minutes after the start.', 'yellow'))
+                    self.logger.warning('Sending pictures needs to be two minutes after the start.')
 
                 elif item['msg'] == 'ack':
                     print 'Ack'
@@ -410,12 +383,11 @@ class Uncle:
                 print 'Chatbot is typing....'
 
             msg_send = ["clientMessage", {"msgId": msg_id, "content": chat_bot_respond,
-                                          "options": {"emitPartner": False, "msgId": msg_id,
-                                                      "isImage": False}}]
+                                          "options": {"emitPartner": False, "msgId": msg_id, "isImage": False}}]
             msg_send_str = '42' + json.dumps(msg_send).decode('utf-8')
             ws.send(msg_send_str)
-
-            partner_info = '###ChatBotMsg: ' + chat_bot_respond
+		
+	    partner_info = '###Chatbot' + str(self.instance_index) + 'Msg: ' + chat_bot_respond
             print (colored(partner_info, 'red'))
             self.logger.info(partner_info)
 
