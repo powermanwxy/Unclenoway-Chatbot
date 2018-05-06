@@ -8,8 +8,11 @@ log_path = "Logs/"
 # Proxy might be unstable, if you're not running this in multiprocessing, suggest just don't use proxy.
 proxy_enabled = False
 # This has to match with IPProxyPool's config.
-proxy_url = 'http://127.0.0.1:1024'
+proxy_url = 'http://127.0.0.1:8000'
 
+# Chatbot's type: 1 = built in, 2 = Tu Ling
+# If you're using Tu Ling, don't forgot to define chatbot_api_key
+chatbot_type = 1
 # Chatbot's gender: f/m
 chatbot_gender = 'f'
 # Chatbot's city, currently only support cities in China.
@@ -20,6 +23,7 @@ chatbot_age = 2
 chatbot_img_respond = u'哇厉害了hhh'
 
 # See <validate.py>. If this is not empty, automatic validate platform will NOT be used.
+# You have to define either usr_id or validate_api_key
 usr_id = ''
 # Validate platform api key. http://www.25531.com
 validate_api_key = ''

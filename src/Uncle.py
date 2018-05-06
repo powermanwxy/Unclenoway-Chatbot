@@ -9,6 +9,8 @@ import time
 import threading
 from termcolor import *
 import os
+from chatterbot import ChatBot
+from chatterbot.trainers import ChatterBotCorpusTrainer
 
 import chatBot
 import validate
@@ -99,13 +101,19 @@ class Uncle:
         self.time_controller = None
         self.fh = None
 
-        if self.usr_id == '' and validate_api_key == '':
-            print 'You have to define either usr_id or validate_api_key!'
-            print 'Stop!'
+        if chatbot_type == 1:
+            self.chatbot = ChatBot('Anderson', storage_adapter='chatterbot.storage.MongoDatabaseAdapter')
+        elif chatbot_type == 2:
+            if chatbot_api_key == '':
+                print 'You have to define chatbot_api_key!'
+                print 'Stop!'
+                self.loop = False
+        else:
+            print 'Wrong chatbot type!'
             self.loop = False
 
-        if chatbot_api_key == '':
-            print 'You have to define chatbot_api_key!'
+        if self.usr_id == '' and validate_api_key == '':
+            print 'You have to define either usr_id or validate_api_key!'
             print 'Stop!'
             self.loop = False
 
@@ -113,6 +121,9 @@ class Uncle:
             self.loop = False
 
     def start(self):
+        if chatbot_type == 1:
+            self.chatbot.set_trainer(ChatterBotCorpusTrainer)
+            self.chatbot.train("./training_data/")
 
         if not os.path.isdir('Logs/'):
             os.mkdir(log_path)
@@ -131,49 +142,57 @@ class Uncle:
 
         print 'Server user count: ', socket_server['data']['userCount'], ', female: ', socket_server['data']['female']
 
-        while self.loop:
-            sid_request = requests.get('http://' + socket_url + '/socket.io/?EIO=3&transport=polling&t='
-                                       + website_t_str)
-            sid_str = sid_request.text[4:len(sid_request.text) - 4]
-            sid = json.loads(sid_str)['sid']
-            print 'Sid: ', sid
+        try:
+            while self.loop:
+                sid_request = requests.get('http://' + socket_url + '/socket.io/?EIO=3&transport=polling&t='
+                                           + website_t_str)
+                sid_str = sid_request.text[4:len(sid_request.text) - 4]
+                sid = json.loads(sid_str)['sid']
+                print 'Sid: ', sid
 
-            cookie = sid_request.headers['set-cookie']
-            cookie = cookie[3:len(cookie) - 18]
+                cookie = sid_request.headers['set-cookie']
+                cookie = cookie[3:len(cookie) - 18]
 
-            ws_url = 'ws://' + socket_url + '/socket.io/?EIO=3&transport=websocket&sid=' + sid
-            print 'Connecting: ', ws_url
+                ws_url = 'ws://' + socket_url + '/socket.io/?EIO=3&transport=websocket&sid=' + sid
+                print 'Connecting: ', ws_url
 
-            ws = websocket.WebSocketApp(ws_url,
-                                        header={
-                                            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) '
-                                                          'AppleWebKit/537.36 (KHTML, like Gecko) '
-                                                          'Chrome/67.0.3393.4 Safari/537.36',
-                                            'Upgrade': 'websocket',
-                                            'Connection': 'Upgrade'
-                                        },
-                                        cookie='io=' + cookie,
-                                        on_close=self.on_close,
-                                        on_message=self.on_message,
-                                        on_error=self.on_error
-                                        )
-            ws.on_open = self.on_open
+                ws = websocket.WebSocketApp(ws_url,
+                                            header={
+                                                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) '
+                                                              'AppleWebKit/537.36 (KHTML, like Gecko) '
+                                                              'Chrome/67.0.3393.4 Safari/537.36',
+                                                'Upgrade': 'websocket',
+                                                'Connection': 'Upgrade'
+                                            },
+                                            cookie='io=' + cookie,
+                                            on_close=self.on_close,
+                                            on_message=self.on_message,
+                                            on_error=self.on_error
+                                            )
+                ws.on_open = self.on_open
 
-            self.pingpong_sender = PingPongSender(ws, self.logger)
-            self.time_controller = TimeController(ws, self.logger, self.request_new_user)
+                self.pingpong_sender = PingPongSender(ws, self.logger)
+                self.time_controller = TimeController(ws, self.logger, self.request_new_user)
 
-            if proxy_enabled:
-                self.proxy_address = proxy.get_proxy(self.logger, proxy_url, self.instance_index)
-                print 'Proxy address: ', self.proxy_address[0]
-                ws.run_forever(http_proxy_host=self.proxy_address[0], http_proxy_port=self.proxy_address[1])
+                if proxy_enabled:
+                    self.proxy_address = proxy.get_proxy(self.logger, proxy_url, self.instance_index)
+                    print 'Proxy address: ', self.proxy_address[0]
+                    ws.run_forever(http_proxy_host=self.proxy_address[0], http_proxy_port=self.proxy_address[1])
 
-            else:
-                ws.run_forever()
+                else:
+                    ws.run_forever()
 
-            ws.close()
-            time.sleep(5)
+                ws.close()
+                time.sleep(5)
+        except KeyboardInterrupt:
+            logging.info("Quit")
+            print "Quit..."
+            self.loop = False
+            self.pingpong_sender.loop = False
+            self.time_controller.loop = False
 
     def on_open(self, ws):
+
 
         ws.send("2probe")
         ws.send("5")
@@ -356,7 +375,7 @@ class Uncle:
 
             self.time_controller.time_left = chat_timeout
 
-            msg_read = ['syscmd', {"msg":"msgRead","msgId": data[1]['msgId']}]
+            msg_read = ['syscmd', {"msg": "msgRead", "msgId": data[1]['msgId']}]
             msg_read_str = '42' + json.dumps(msg_read, ensure_ascii=False)
             ws.send(msg_read_str)
 
@@ -366,8 +385,12 @@ class Uncle:
             if data[1]['options']['isImage'] is True:
                 chat_bot_respond = chatbot_img_respond
             else:
-                chat_bot_respond = chatBot.get_message_from_bot(self.logger, self.chatbot_id,
-                                                                chatbot_location, data[1]['content'], chatbot_api_key)
+                if chatbot_type == 1:
+                    chat_bot_respond = unicode(self.chatbot.get_response(data[1]['content']))
+                else:
+                    chat_bot_respond = chatBot.get_message_from_bot(self.logger, self.chatbot_id,
+                                                                    chatbot_location, data[1]['content'],
+                                                                    chatbot_api_key)
 
             n = random.random()
             n = round(3 * n) + 3
@@ -386,8 +409,8 @@ class Uncle:
                                           "options": {"emitPartner": False, "msgId": msg_id, "isImage": False}}]
             msg_send_str = '42' + json.dumps(msg_send).decode('utf-8')
             ws.send(msg_send_str)
-		
-	    partner_info = '###Chatbot' + str(self.instance_index) + 'Msg: ' + chat_bot_respond
+
+            partner_info = '###ChatbotMsg: ' + chat_bot_respond
             print (colored(partner_info, 'red'))
             self.logger.info(partner_info)
 
