@@ -8,7 +8,7 @@
 >关于依赖项安装工具的更多信息, 可通过 `./install_dependencies.sh -h`来查看。
 	
 2. 运行 `./start.sh`. 
->如果您想让本程序以多线程运行，需要先启动IPProxyPool（代理IP池），只需键入 `./install_dependencies.sh -p`
+>如果您想让本程序以多进程运行，需要先启动IPProxyPool（代理IP池），只需键入 `./install_dependencies.sh -p`
 
 3. *(可选)* 如果您不想使用内置的AI机器人，可以在[Tu Ling (图灵)](http://www.tuling123.com)上注册账户, 并修改 config.py文件里的 `chatbot_api_key` 与您在Tu Ling(图灵)上的密钥一致。这样的效果可能会更好，也可能不会。
 
