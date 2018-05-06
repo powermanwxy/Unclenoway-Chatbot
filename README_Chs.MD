@@ -16,7 +16,7 @@
 
 	![get_user_id](https://github.com/powermanwxy/Unclenoway-Chatbot/raw/master/docs/get_usr_id.jpg)
 
-顺便，您可以将您自己的语料数据已YAML格式放在`/src/training_data/`。 用上你的想象力！
+顺便，您可以将您自己的语料数据以YAML格式放在`/src/training_data/`。 用上你的想象力！
 
 
 ## 许可证
