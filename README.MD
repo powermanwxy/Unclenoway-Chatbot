@@ -4,7 +4,7 @@ This software is an automatic chatting robot for anonymous chat room [UncleNoWay
 
 ## How to use
 
-1. Set the installation script excuatable by `chmod +x install_dependencies.sh` and run `./install_dependencies.sh` to install the dependencies. 
+1. Set the installation script executable by `chmod +x install_dependencies.sh` and run `./install_dependencies.sh` to install the dependencies. 
 >For more infomation about installation tool, please type `./install_dependencies.sh -h`
 	
 2. Run `./start.sh`. 
@@ -16,7 +16,7 @@ This software is an automatic chatting robot for anonymous chat room [UncleNoWay
 
 	![get_user_id](https://github.com/powermanwxy/Unclenoway-Chatbot/raw/master/docs/get_usr_id.jpg)
 
-By the way, you can add your own conversition data in order to train the chatbot, just add them to `/src/training_data/` with yaml format. Just using your imagination. 
+By the way, you can add your own conversition data in order to train the chatbot by add them to the`/src/training_data/` with yaml format. Just using your imagination : )
 
 
 ## Licence
