@@ -1,1 +1,7 @@
 src/.idea
+*.pyc
+mongodb
+IPProxyPool-master
+db
+db.log
+src/Logs

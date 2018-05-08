@@ -1,10 +1,10 @@
 #!/bin/bash
 
-echo -e "\033[31mStarting proxy pool... \033[0m"
 
 while getopts "p" option;do
     case $option in
     p)
+        echo -e "\033[31mStarting proxy pool... \033[0m"
         file='./IPProxyPool-master/IPProxy.py'
         if [ -f "$file" ]
         then
